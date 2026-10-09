@@ -1,20 +1,89 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      TaskApp
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list>
+    @for ( tarea of tareas; track tarea.id){
+    <ion-item>
+      <ion-checkbox slot="start" [checked]="tarea.completed" (ionChange)="cambiarEstado(tarea, $event.detail.checked)"></ion-checkbox>
+      <ion-label [class.completed]="tarea.completed">
+        <h1>{{ tarea.title }}</h1>
+        <p>{{ tarea.description }}</p>
+        <ion-badge>
+          {{ tarea.priority }}
+        </ion-badge>
+      </ion-label>
+      <ion-button slot="end" fill="clear" color="danger" (click)="eliminarTarea(tarea.id)" >
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+   }
+  </ion-list>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="mostrarFormulario = !mostrarFormulario">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
+  
+
+@if (mostrarFormulario) {
+  <form [formGroup]="formulario" (ngSubmit)="agregarTarea()">
+    <ion-list>
+      <ion-item>
+        <ion-input
+          label="Título"
+          labelPlacement="stacked"
+          formControlName="titulo"
+          placeholder="Ej. Estudiar Angular">
+        </ion-input>
+      </ion-item>
+
+      @if (formulario.get('titulo')?.touched &&
+           formulario.get('titulo')?.invalid) {
+        <ion-text color="danger">
+          <p>El título es obligatorio y debe tener al menos 5 caracteres.</p>
+        </ion-text>
+      }
+
+      <ion-item>
+        <ion-textarea
+          label="Descripción"
+          labelPlacement="stacked"
+          formControlName="descripcion"
+          placeholder="Describe la tarea">
+        </ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-select
+          label="Prioridad"
+          labelPlacement="stacked"
+          formControlName="prioridad">
+          <ion-select-option value="Alta">Alta</ion-select-option>
+          <ion-select-option value="Media">Media</ion-select-option>
+          <ion-select-option value="Baja">Baja</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button expand="block" type="submit">
+        Guardar tarea
+      </ion-button>
+    </ion-list>
+  </form>
+    }
 </ion-content>
+
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title size="small">TaskApp</ion-title>
+  </ion-toolbar>
+</ion-footer>
